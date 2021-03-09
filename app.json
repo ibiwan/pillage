@@ -1,0 +1,12 @@
+{
+  "name": "pillage",
+  "displayName": "pillage",
+  "expo": {
+    "name": "pillage",
+    "slug": "pillage",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
