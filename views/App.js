@@ -1,12 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 
 import React, { 
-  useEffect, 
   useState,
 } from 'react';
 
 import { 
-  AsyncStorage,
   FlatList,
   Text, 
   TextInput,
@@ -14,7 +12,7 @@ import {
   View, 
 } from 'react-native';
 
-import useStateCallback from './useStateCallback'
+import useCached from '../hooks/useCached'
 
 import AddIcon from './icons/AddIcon'
 import DeleteIcon from './icons/DeleteIcon'
@@ -23,50 +21,12 @@ import SaveIcon from './icons/SaveIcon'
 
 import styles from './styles'
 
-const deepEqual = require("fast-deep-equal")
-
 const MED_NAMES_KEY = 'medNames';
 
-const {
-  setItem, 
-  getItem
-} = AsyncStorage;
+export default function App({ doBlah }) {
+  console.log("\n\n");
+  console.log("start rendering")
 
-const useCached = (key, defaultValue = null) => {
-  const [storedVal, setStoredVal] = useState(defaultValue);
-  const [localVal, setLocalVal] = useStateCallback();
-
-  const fetchStoredVal = async () => {
-    const storedRaw = await getItem(key);
-    const fetchedVal = JSON.parse(storedRaw);
-
-    if(!deepEqual(fetchedVal, storedVal)){
-      setStoredVal(fetchedVal);
-
-      if(!deepEqual(storedVal, localVal)){
-        setLocalVal(fetchedVal);
-      }
-    }
-
-    if(undefined === localVal){
-      setLocalVal(storedVal);
-    }
-  }
-
-  const saveChanges = async () => {
-    console.log("SAVING")
-    if(!deepEqual(storedVal, localVal)){
-      await setItem(key, JSON.stringify(localVal))
-      await fetchStoredVal()
-    }
-  }
-
-  useEffect( () => { fetchStoredVal(); } ); // use thunk to hide asyncness
-
-  return [localVal, setLocalVal, saveChanges];
-}
-
-export default function App() {
   const [editIndex, setEditIndex] = useState();
   const [detailIndex, setDetailIndex] = useState();
   const [medNames, setMedNames, saveMedNames] = useCached(MED_NAMES_KEY, []);
@@ -75,12 +35,14 @@ export default function App() {
   const handleMedNameUpdate = (i, val) => {
     const updatedNames = [...medNames];
     updatedNames[i] = val;
+    console.log("setting updated", {i, val, updatedNames})
     setMedNames(updatedNames);
   }
 
   const addMedName = () => {
+    console.log("adding new to mednames")
     setMedNames(
-      [...medNames,''], 
+      [...medNames, ''], 
       // then,
       saveMedNames
     );
@@ -88,27 +50,35 @@ export default function App() {
 
   const medButtonPressed = (i) => () => {
     console.log("see details for", {i})
+    doBlah();
   }
 
   const editButtonPressed = (i) => () => {
     if(editIndex !== null){
+      console.log("saving med names")
       saveMedNames()
     }
     
+    console.log("switching to edit item", {i})
     setEditIndex(i)
   };
 
   const saveButtonPressed = (i) => () => {
+    console.log("saving")
     saveMedNames();
+    console.log("clearing edit mode")
     setEditIndex(null);
   }
 
   const deleteButtonPressed = (i) => () => {
+    console.log("deleting an item, then should call save", {i})
+    const newList = [
+      ...medNames.slice(0, i),
+      ...medNames.slice(i+1),
+    ]
+    console.log("setting", {newList})
     setMedNames(
-      [
-        ...medNames.slice(0, i),
-        ...medNames.slice(i+1),
-      ],
+      newList,
       // then,
       saveMedNames
     );
@@ -150,6 +120,7 @@ export default function App() {
     );
   }
 
+  console.log("rendering to return\n")
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
