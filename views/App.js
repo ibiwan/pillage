@@ -24,9 +24,6 @@ import styles from './styles'
 const MED_NAMES_KEY = 'medNames';
 
 export default function App({ doBlah }) {
-  console.log("\n\n");
-  console.log("start rendering")
-
   const [editIndex, setEditIndex] = useState();
   const [detailIndex, setDetailIndex] = useState();
   const [medNames, setMedNames, saveMedNames] = useCached(MED_NAMES_KEY, []);
@@ -35,12 +32,10 @@ export default function App({ doBlah }) {
   const handleMedNameUpdate = (i, val) => {
     const updatedNames = [...medNames];
     updatedNames[i] = val;
-    console.log("setting updated", {i, val, updatedNames})
     setMedNames(updatedNames);
   }
 
   const addMedName = () => {
-    console.log("adding new to mednames")
     setMedNames(
       [...medNames, ''], 
       // then,
@@ -55,28 +50,22 @@ export default function App({ doBlah }) {
 
   const editButtonPressed = (i) => () => {
     if(editIndex !== null){
-      console.log("saving med names")
       saveMedNames()
     }
     
-    console.log("switching to edit item", {i})
     setEditIndex(i)
   };
 
   const saveButtonPressed = (i) => () => {
-    console.log("saving")
     saveMedNames();
-    console.log("clearing edit mode")
     setEditIndex(null);
   }
 
   const deleteButtonPressed = (i) => () => {
-    console.log("deleting an item, then should call save", {i})
     const newList = [
       ...medNames.slice(0, i),
       ...medNames.slice(i+1),
     ]
-    console.log("setting", {newList})
     setMedNames(
       newList,
       // then,
@@ -120,7 +109,6 @@ export default function App({ doBlah }) {
     );
   }
 
-  console.log("rendering to return\n")
   return (
     <View style={styles.container}>
       <Text style={styles.title}>

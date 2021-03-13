@@ -7,14 +7,12 @@ import {
 
 function useStateCallback(initialState){
   const [state, _setState] = useState(initialState);
-  console.log('useStateCallback FOB', {state})
 
   const callbackRef = useRef();
   const isFirstCallbackCall = useRef(true);
 
   const setState = useCallback(
     (setStateAction, callback) => {
-      console.log("setting callback and calling real setState")
       callbackRef.current = callback;
       _setState(setStateAction);
     }, 
@@ -28,7 +26,6 @@ function useStateCallback(initialState){
     }
 
     if(callbackRef.current){
-      console.log("calling callback")
       callbackRef.current(state);
       callbackRef.current=null
     }
