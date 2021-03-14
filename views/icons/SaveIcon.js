@@ -1,13 +1,8 @@
 import React from 'react';
 
-import BaseIcon from './BaseIcon'
+import BaseIcon from './BaseIcon';
 
-export default (props) => {
-  return (
-    <BaseIcon
-      {...props}
-      name='check-square-o'
-      type='font-awesome'
-    />
-  )
-}
+export default (props) => (
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  <BaseIcon {...props} name="check-square-o" type="font-awesome" />
+);

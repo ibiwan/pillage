@@ -7,12 +7,10 @@ import configureStore from '../store/configureStore';
 
 const store = configureStore();
 
-const AppProvider = () => {
-  return (
-    <Provider store={store}>
-      <AppContainer />
-    </Provider>
-  );
-};
+const AppProvider = () => (
+  <Provider store={store}>
+    <AppContainer />
+  </Provider>
+);
 
 export default AppProvider;

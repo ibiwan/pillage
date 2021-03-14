@@ -1,16 +1,29 @@
-import { all, put, takeEvery } from 'redux-saga/effects'
-import { ACTION_BLAH } from './actions'
+import { all, call, put, takeEvery } from 'redux-saga/effects';
 
-const blah = function* () {
-  console.log("TOOK BLAH")
+import { AsyncStorage } from 'react-native';
+
+import { GET_CACHED, SET_CACHED } from './actions';
+
+const { setItem, getItem } = AsyncStorage;
+
+function* getCached({ key, defaultValue = null }) {
+  console.log('TOOK GET_CACHED', { key, defaultValue, getItem });
+  const storedRaw = (yield call(getItem, key)) ?? defaultValue;
+  console.log({ storedRaw });
 }
 
-const watchBlah = function* () {
-  yield takeEvery(ACTION_BLAH, blah)
+function* setCached(...args) {
+  yield console.log('TOOK SET_CACHED', { args });
 }
+
+const watchGetCached = function* () {
+  yield takeEvery(GET_CACHED, getCached);
+};
+
+const watchSetCached = function* () {
+  yield takeEvery(SET_CACHED, setCached);
+};
 
 export default function* rootSaga() {
-  yield all([
-    watchBlah()
-  ])
+  yield all([watchGetCached(), watchSetCached()]);
 }

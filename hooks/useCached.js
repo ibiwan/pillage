@@ -1,20 +1,11 @@
-import { 
-  useEffect, 
-  useState,
-} from 'react';
+import { useEffect, useState } from 'react';
 
-import { 
-  AsyncStorage,
-} from 'react-native';
+import { AsyncStorage } from 'react-native';
 
-const deepEqual = require("fast-deep-equal")
+import deepEqual from 'fast-deep-equal';
+import useStateCallback from './useStateCallback';
 
-import useStateCallback from './useStateCallback'
-
-const {
-  setItem, 
-  getItem
-} = AsyncStorage;
+const { setItem, getItem } = AsyncStorage;
 
 const useCached = (key, defaultValue = null) => {
   const [storedVal, setStoredVal] = useState(defaultValue);
@@ -24,32 +15,32 @@ const useCached = (key, defaultValue = null) => {
     const storedRaw = await getItem(key);
     const fetchedVal = JSON.parse(storedRaw);
 
-    if(!deepEqual(fetchedVal, storedVal)){
+    if (!deepEqual(fetchedVal, storedVal)) {
       setStoredVal(fetchedVal);
 
-      if(!deepEqual(storedVal, localVal)){
+      if (!deepEqual(storedVal, localVal)) {
         setLocalVal(fetchedVal);
       }
     }
 
-    if(undefined === localVal){
+    if (undefined === localVal) {
       setLocalVal(storedVal);
     }
-  }
+  };
 
   const saveChanges = async () => {
-    if(!deepEqual(storedVal, localVal)){
-      await setItem(key, JSON.stringify(localVal))
-      await fetchStoredVal()
+    if (!deepEqual(storedVal, localVal)) {
+      await setItem(key, JSON.stringify(localVal));
+      await fetchStoredVal();
     }
-  }
+  };
 
-  useEffect( () => { 
+  useEffect(() => {
     // use thunk to hide async-ness
-    fetchStoredVal(); 
-  } ); 
+    fetchStoredVal();
+  });
 
   return [localVal, setLocalVal, saveChanges];
-}
+};
 
 export default useCached;
