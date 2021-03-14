@@ -22,7 +22,9 @@ import styles from './styles';
 
 import { MED_NAMES_KEY } from '../store/selectors';
 
-export default function App({ getCached, setCached }) {
+export default function App({ getCached, setCached, medNames: theMedNames }) {
+  console.log({ theMedNames });
+
   const [editIndex, setEditIndex] = useState();
   // const [detailIndex, setDetailIndex] = useState();
   const [medNames, setMedNames, saveMedNames] = useCached(MED_NAMES_KEY, []);
@@ -39,7 +41,7 @@ export default function App({ getCached, setCached }) {
     setMedNames(
       [...medNames, ''],
       // then,
-      saveMedNames
+      saveMedNames,
     );
 
     setCached(MED_NAMES_KEY);
@@ -47,7 +49,6 @@ export default function App({ getCached, setCached }) {
 
   const medButtonPressed = (i) => () => {
     console.log('see details for', { i });
-    // doBlah();
   };
 
   const editButtonPressed = (i) => () => {
@@ -69,7 +70,7 @@ export default function App({ getCached, setCached }) {
     setMedNames(
       newList,
       // then,
-      saveMedNames
+      saveMedNames,
     );
   };
 
@@ -125,4 +126,5 @@ export default function App({ getCached, setCached }) {
 App.propTypes = {
   getCached: PropTypes.func.isRequired,
   setCached: PropTypes.func.isRequired,
+  medNames: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

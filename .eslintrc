@@ -17,6 +17,13 @@
     "object-property-newline": [
       "error"
     ],
+    "newline-before-return": [
+      "error"
+    ],
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
     "react/jsx-filename-extension": [
       1,
       {
@@ -30,7 +37,8 @@
       "error",
       {
         "semi": true,
-        "singleQuote": true
+        "singleQuote": true,
+        "trailingComma": "all"
       }
     ]
   }

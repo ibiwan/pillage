@@ -14,6 +14,7 @@ function useStateCallback(initialState) {
   useEffect(() => {
     if (isFirstCallbackCall.current) {
       isFirstCallbackCall.current = false;
+
       return;
     }
 
