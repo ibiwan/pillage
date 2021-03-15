@@ -11,12 +11,14 @@ import {
 } from '../actions/cache';
 
 import {
-  ADD_MED_NAME,
   FETCH_MED_NAMES,
   STORE_MED_NAMES,
+  ADD_MED_NAME,
+  EDIT_MED_NAME,
+  DELETE_MED_NAME,
   fetchMedNames as fetchMedNamesAction,
-  setMedNames as setMedNamesAction,
   storeMedNames as storeMedNamesAction,
+  setMedNames as setMedNamesAction,
 } from '../actions/medNames';
 
 import {
@@ -25,14 +27,12 @@ import {
 } from '../selectors';
 
 function* fetchMedNamesSaga() {
-  console.log('fetchMedNamesSaga: will getCachedAction');
   yield put(getCachedAction(MED_NAMES_KEY, []));
 }
 
 function* storeMedNamesSaga({ value }) {
-  console.log('storeMedNamesSaga: will storeCached');
   yield put(storeCached(MED_NAMES_KEY, value));
-  console.log('storeMedNamesSaga: will fetchMedNamesSaga');
+
   yield put(fetchMedNamesAction());
 }
 
@@ -42,7 +42,27 @@ function* setMedNamesSaga({ value }) {
 
 function* addMedNameSaga() {
   const currentList = yield select(getMedNames);
+
   yield put(storeMedNamesAction([...currentList, '']));
+}
+
+function* editMedNameSaga({ i, value }) {
+  console.log({ i, value });
+  const currentList = yield select(getMedNames);
+  const newList = [...currentList];
+  newList[i] = value;
+
+  yield put(storeMedNamesAction(newList));
+}
+
+function* deleteMedNameSaga({ i }) {
+  const currentList = yield select(getMedNames);
+  const newList = [
+    ...currentList.slice(0, i),
+    ...currentList.slice(i + 1),
+  ];
+
+  yield put(storeMedNamesAction(newList));
 }
 
 export function* watchFetchMedNames() {
@@ -61,9 +81,19 @@ export function* watchAddMedName() {
   yield takeEvery(ADD_MED_NAME, addMedNameSaga);
 }
 
+export function* watchEditMedName() {
+  yield takeEvery(EDIT_MED_NAME, editMedNameSaga);
+}
+
+export function* watchDeleteMedName() {
+  yield takeEvery(DELETE_MED_NAME, deleteMedNameSaga);
+}
+
 export default [
   watchFetchMedNames(),
   watchStoreMedNames(),
   watchSetFromCached(),
   watchAddMedName(),
+  watchEditMedName(),
+  watchDeleteMedName(),
 ];
