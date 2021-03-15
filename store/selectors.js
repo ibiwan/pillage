@@ -4,7 +4,6 @@ export const getMedNames = (state) => {
   const {
     medList: { medNames },
   } = state;
-  console.log({ state });
 
   return medNames ?? [];
 };

@@ -1,25 +1,27 @@
 import { combineReducers } from 'redux';
 
-import { SET_CACHED } from './actions';
+import { SET_MED_NAMES } from './actions/medNames';
 
 const defaultMedListState = [];
 
 const medListReducer = (state = defaultMedListState, action) => {
-  console.log({ action });
-
   const { type, ...context } = action;
 
+  console.log('medListReducer', JSON.stringify({
+    type,
+    context,
+  }));
+
   switch (type) {
-    case SET_CACHED: {
-      const { key, value } = context;
+    case SET_MED_NAMES: {
+      const { medNames } = context;
 
       return {
         ...state,
-        [key]: value,
+        medNames,
       };
     }
 
-    // case GET_CACHED: // fallthru to default: no state change
     default:
       return state;
   }

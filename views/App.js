@@ -1,6 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 
-import React, { useState } from 'react';
+import React, { useEffect,
+  // useEffect,
+  useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -11,7 +13,7 @@ import {
   View,
 } from 'react-native';
 
-import useCached from '../hooks/useCached';
+// import useCached from '../hooks/useCached';
 
 import AddIcon from './icons/AddIcon';
 import DeleteIcon from './icons/DeleteIcon';
@@ -20,87 +22,87 @@ import SaveIcon from './icons/SaveIcon';
 
 import styles from './styles';
 
-import { MED_NAMES_KEY } from '../store/selectors';
+export default function App({
+  medNames,
+  fetchMedNames,
+  addMedName,
+  editMedName,
+  deleteMedName,
+}) {
+  useEffect(() => {
+    fetchMedNames();
+  }, [fetchMedNames]);
 
-export default function App({ getCached, setCached, medNames: theMedNames }) {
-  console.log({ theMedNames });
-
-  const [editIndex, setEditIndex] = useState();
+  const [edit, setEdit] = useState({ index: null, val: null });
   // const [detailIndex, setDetailIndex] = useState();
-  const [medNames, setMedNames, saveMedNames] = useCached(MED_NAMES_KEY, []);
 
-  getCached(MED_NAMES_KEY, []);
-
-  const handleMedNameUpdate = (i, val) => {
-    const updatedNames = [...medNames];
-    updatedNames[i] = val;
-    setMedNames(updatedNames);
+  const handleMedNameUpdate = (val) => {
+    setEdit({ ...edit, val });
   };
 
-  const addMedName = () => {
-    setMedNames(
-      [...medNames, ''],
-      // then,
-      saveMedNames,
-    );
-
-    setCached(MED_NAMES_KEY);
+  const handleAddMedName = () => {
+    // console.log('handleAddMedName');
+    addMedName();
   };
 
-  const medButtonPressed = (i) => () => {
+  const handleMedButtonPressed = (i) => () => {
     console.log('see details for', { i });
   };
 
-  const editButtonPressed = (i) => () => {
-    if (editIndex !== null) {
-      saveMedNames();
+  const saveMedName = () => {
+    if (edit.index !== null) {
+      editMedName(edit.index, edit.val);
+      setEdit({ index: null, val: null });
+    }
+  };
+
+  const handleEditButtonPressed = (i) => () => {
+    console.log('I would like to edit, now', { i });
+    if (edit.index !== null) {
+      saveMedName();
     }
 
-    setEditIndex(i);
+    setEdit({ index: i, val: medNames[i] });
   };
 
-  const saveButtonPressed = () => () => {
-    saveMedNames();
-    setEditIndex(null);
+  const handleSaveButtonPressed = () => () => {
+    console.log('I would like to save, now');
+    saveMedName();
   };
 
-  const deleteButtonPressed = (i) => () => {
-    const newList = [...medNames.slice(0, i), ...medNames.slice(i + 1)];
+  const handleDeleteButtonPressed = (i) => () => {
+    console.log('I would like to delete, now', { i });
 
-    setMedNames(
-      newList,
-      // then,
-      saveMedNames,
-    );
+    deleteMedName(i);
   };
 
   const medNameRenderItem = ({ item: medName, index }) => {
     if (index === medNames.length) {
-      return <AddIcon onPress={addMedName} />;
+      return <AddIcon onPress={handleAddMedName} />;
     }
 
     return (
       <TouchableHighlight
-        onPress={medButtonPressed(index)}
-        disabled={editIndex === index}
+        onPress={handleMedButtonPressed(index)}
+        disabled={edit.index === index}
       >
         <View style={styles.medItem}>
-          {editIndex === index ? (
+          {edit.index === index ? (
             <TextInput
               value={medName}
               onChangeText={(val) => handleMedNameUpdate(index, val)}
-              onEndEditing={saveMedNames}
+              // onEndEditing={saveMedNames}
               style={styles.medNameField}
             />
           ) : (
             <Text style={styles.medNameField}>{`${medName}_`}</Text>
           )}
-          {editIndex === index ? (
-            <SaveIcon onPress={saveButtonPressed(index)} />
+          {edit.index === index ? (
+            <SaveIcon onPress={handleSaveButtonPressed()} />
           ) : (
-            <EditIcon onPress={editButtonPressed(index)} />
+            <EditIcon onPress={handleEditButtonPressed(index)} />
           )}
-          <DeleteIcon onPress={deleteButtonPressed(index)} />
+          <DeleteIcon onPress={handleDeleteButtonPressed(index)} />
         </View>
       </TouchableHighlight>
     );
@@ -124,7 +126,9 @@ export default function App({ getCached, setCached, medNames: theMedNames }) {
 }
 
 App.propTypes = {
-  getCached: PropTypes.func.isRequired,
-  setCached: PropTypes.func.isRequired,
   medNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  fetchMedNames: PropTypes.func.isRequired,
+  addMedName: PropTypes.func.isRequired,
+  deleteMedName: PropTypes.func.isRequired,
+  editMedName: PropTypes.func.isRequired,
 };

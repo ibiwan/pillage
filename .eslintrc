@@ -2,12 +2,10 @@
   "extends": [
     "react-app",
     "airbnb",
-    "plugin:jsx-a11y/recommended",
-    "prettier"
+    "plugin:jsx-a11y/recommended"
   ],
   "plugins": [
-    "jsx-a11y",
-    "prettier"
+    "jsx-a11y"
   ],
   "rules": {
     "quotes": [
@@ -15,7 +13,10 @@
       "single"
     ],
     "object-property-newline": [
-      "error"
+      "error",
+      {
+        "allowAllPropertiesOnSameLine": true
+      }
     ],
     "newline-before-return": [
       "error"
@@ -33,12 +34,21 @@
         ]
       }
     ],
-    "prettier/prettier": [
+    "object-curly-newline": [
       "error",
       {
-        "semi": true,
-        "singleQuote": true,
-        "trailingComma": "all"
+        "ObjectExpression": {
+          "consistent": true
+        },
+        "ObjectPattern": {
+          "consistent": true
+        },
+        "ImportDeclaration": {
+          "consistent": true
+        },
+        "ExportDeclaration": {
+          "consistent": true
+        }
       }
     ]
   }

@@ -1,18 +1,27 @@
 import { connect } from 'react-redux';
 
-import { getCached, setCached } from '../store/actions';
+import {
+  fetchMedNames as fetchMedNamesAction,
+  addMedName as addMedNameAction,
+  deleteMedName as deleteMedNameAction,
+  editMedName as editMedNameAction,
+} from '../store/actions/medNames';
 
-import { MED_NAMES_KEY, getMedNames } from '../store/selectors';
+import {
+  getMedNames as getMedNamesSeleector,
+} from '../store/selectors';
 
 import App from './App';
 
 const mapStateToProps = (state /* , ownProps */) => ({
-  [MED_NAMES_KEY]: getMedNames(state),
+  medNames: getMedNamesSeleector(state),
 });
 
 const mapDispatchToProps = {
-  getCached,
-  setCached,
+  addMedName: addMedNameAction,
+  deleteMedName: deleteMedNameAction,
+  editMedName: editMedNameAction,
+  fetchMedNames: fetchMedNamesAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
