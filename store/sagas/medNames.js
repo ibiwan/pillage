@@ -4,6 +4,8 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   SET_FROM_CACHED,
   getCached as getCachedAction,
@@ -31,7 +33,18 @@ function* fetchMedNamesSaga() {
 }
 
 function* storeMedNamesSaga({ value }) {
-  yield put(storeCached(MED_NAMES_KEY, value));
+  const updatedValue = value.map((item) => {
+    if (typeof item === 'string') {
+      return {
+        id: uuidv4(),
+        name: item,
+      };
+    }
+
+    return item;
+  });
+
+  yield put(storeCached(MED_NAMES_KEY, updatedValue));
 
   yield put(fetchMedNamesAction());
 }
@@ -43,12 +56,20 @@ function* setMedNamesSaga({ value }) {
 function* addMedNameSaga() {
   const currentList = yield select(getMedNames);
 
-  yield put(storeMedNamesAction([...currentList, '']));
+  const newItem = {
+    id: uuidv4(),
+    name: '',
+  };
+
+  yield put(storeMedNamesAction([
+    ...currentList,
+    newItem,
+  ]));
 }
 
 function* editMedNameSaga({ i, value }) {
-  console.log({ i, value });
   const currentList = yield select(getMedNames);
+
   const newList = [...currentList];
   newList[i] = value;
 
@@ -57,6 +78,7 @@ function* editMedNameSaga({ i, value }) {
 
 function* deleteMedNameSaga({ i }) {
   const currentList = yield select(getMedNames);
+
   const newList = [
     ...currentList.slice(0, i),
     ...currentList.slice(i + 1),

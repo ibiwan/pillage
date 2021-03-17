@@ -52,7 +52,7 @@ export default function App({
       saveMedName();
     }
 
-    setEdit({ index: i, val: medNames[i] });
+    setEdit({ index: i, val: medNames[i].name });
   };
 
   const medNameRenderItem = ({ item: medName, index }) => {
@@ -64,7 +64,7 @@ export default function App({
       <MedNamesItem
         edit={edit}
         index={index}
-        medName={medName}
+        medName={medName.name}
         setEdit={setEdit}
         saveMedName={saveMedName}
         deleteMedName={deleteMedName}
@@ -92,7 +92,12 @@ export default function App({
 }
 
 App.propTypes = {
-  medNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  medNames: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string,
+    }),
+  ).isRequired,
   fetchMedNames: PropTypes.func.isRequired,
   addMedName: PropTypes.func.isRequired,
   deleteMedName: PropTypes.func.isRequired,
